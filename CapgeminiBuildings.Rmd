@@ -1,0 +1,42 @@
+---
+title: "Capgemini in Telford"
+author: "Alex Robinson"
+date: "19 February 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(leaflet)
+```
+
+## Leaflet Map
+
+The data is taken from a recent Google Maps search but then rendered in leaflet.
+
+```{r dataSetup, echo = FALSE}
+buildingNames <- c("International House", "@Phoenix", "Partnership House",
+                   "St. James House")
+lat <- c(52.672379, 52.676594, 52.685622, 52.686116 )
+lng <- c(-2.414481, -2.441303, -2.438814, -2.443577)
+popup <- paste0(format(round(lat, 2), nsmall = 2) , "W,",
+                format(round(lng, 2), nsmall = 2) , "N")
+
+dfBuild <- data.frame(lat = lat, lng = lng, 
+                      name = buildingNames, popup = popup)
+```
+
+```{r iconSetup, echo = FALSE}
+#capIco <- makeIcon(
+#        iconUrl = "./R/mirrorspider/icons/spade.png",
+#        iconWidth = 30, iconHeight = 31,
+#        iconAnchorX = 15, iconAnchorY = 31/2)
+```
+
+```{r renderMap}
+dfBuild %>% leaflet() %>% addTiles() %>% addMarkers(lng = ~lng, lat = ~lat,
+                                                    label = ~name,
+                                                    popup = ~popup)
+
+```
+
