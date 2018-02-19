@@ -27,16 +27,17 @@ dfBuild <- data.frame(lat = lat, lng = lng,
 ```
 
 ```{r iconSetup, echo = FALSE}
-#capIco <- makeIcon(
-#        iconUrl = "./R/mirrorspider/icons/spade.png",
-#        iconWidth = 30, iconHeight = 31,
-#        iconAnchorX = 15, iconAnchorY = 31/2)
+capIco <- makeIcon(
+        iconUrl = "https://mirrorspider.github.io/dataproducts/spade.png",
+        iconWidth = 30, iconHeight = 31,
+        iconAnchorX = 15, iconAnchorY = 31/2)
 ```
 
 ```{r renderMap}
 dfBuild %>% leaflet() %>% addTiles() %>% addMarkers(lng = ~lng, lat = ~lat,
-                                                    label = ~name,
-                                                    popup = ~popup)
+                                                    popup = ~name,
+                                                    icon = capIco,
+                                                    label = ~popup)
 
 ```
 
