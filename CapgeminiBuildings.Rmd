@@ -13,6 +13,7 @@ require(leaflet)
 ## Leaflet Map
 
 The data is taken from a recent Google Maps search but then rendered in leaflet.
+
 It uses the Capgemini "spade" logo as a custom marker.
 
 ```{r dataSetup, echo = FALSE}
