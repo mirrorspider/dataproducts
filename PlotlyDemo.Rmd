@@ -1,0 +1,50 @@
+---
+title: "Plotly Demonstration"
+author: "Alex Robinson"
+date: "20 February 2018"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+require(plotly)
+require(dplyr)
+require(tidyr)
+require(RColorBrewer)
+require(datasets)
+```
+
+```{r data_setup, echo = FALSE}
+data("Orange")
+ora <- Orange
+fit <- lm(circumference ~ age, data = ora)
+ora <- spread(ora, Tree, circumference)
+ora <- rename(ora, tree1 = "1", tree2 = "2", tree3 = "3", tree4 = "4", 
+              tree5 = "5")
+
+pal <- brewer.pal(5, "Set1")
+
+p <- plot_ly(ora, type = "scatter", mode = "lines+markers") %>%
+        add_trace(x = ~age, y = ~tree1, name = "tree 1", mode = "markers", 
+                  marker = list(color = pal[1])) %>%
+        add_trace(x = ~age, y = ~tree2, name = "tree 2", mode = "markers",
+                  marker = list(color = pal[2])) %>%
+        add_trace(x = ~age, y = ~tree3, name = "tree 3", mode = "markers", 
+                  marker = list(color = pal[3])) %>%
+        add_trace(x = ~age, y = ~tree4, name = "tree 4", mode = "markers",
+                  marker = list(color = pal[4])) %>%
+        add_trace(x = ~age, y = ~tree5, name = "tree 5", mode = "markers",
+                  marker = list(color = pal[5])) %>%
+        add_trace(x = ~age, y = fit$fitted.values[1:7], name = "trend", 
+                  line = list(color = "black", dash = "dot"), mode = "lines") %>%
+        layout(title = "Orange Tree Circumference by Age", 
+               xaxis = list(title = "Tree Age"), 
+               yaxis = list(title = "Circumference"))
+```
+
+## Plotly Output
+
+```{r display_plot, echo = FALSE, warning = FALSE}
+p
+```
