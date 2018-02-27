@@ -1,0 +1,122 @@
+Orange Tree Prognostication
+========================================================
+author: Alex Robinson
+date: 22nd February 2018
+autosize: true
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
+
+Executive Summary
+========================================================
+
+Previously the only way to guess the age of a tree was to chop it down and
+count the rings this was a very destructive way to get information.
+
+Now based on the R Orange dataset there's an alternative approach:
+
+*The Orange Tree Prognostication Shiny App!*
+***
+![Tree rings](640px-Tree_rings.jpg)
+
+<small>Image from:
+https://commons.wikimedia.org/wiki/File:Tree_rings.jpg</small>
+
+
+The App
+========================================================
+class: small-code
+The application takes in the circumference of the target tree and uses a
+linear regression model based on the information from the Orange dataset to 
+predict the age of the tree:
+```{r setup, echo = FALSE}
+require(RColorBrewer)
+
+# Setup global data
+data("Orange")
+ora <- Orange
+orig <- ora
+bestFit <- lm(age ~ circumference, data = ora)
+fit <- bestFit
+selColor <- brewer.pal(5, "Set1")
+unColor <- adjustcolor(selColor, alpha.f = 0.3)
+
+```
+
+```{r showLinear}
+lm(age ~ circumference, data = ora)
+```
+
+```{r createFit, echo = FALSE}
+sel <- c(1,3)
+orig$selected <- orig$Tree %in% sel
+ora <- orig[orig$Tree %in% sel,]
+# fit a model based on the selected trees
+fit <- lm(age ~ circumference, data = ora)
+
+c <- 120
+ic <- as.numeric("5")
+
+p <- predict(fit, 
+             newdata = data.frame(
+                     circumference = c))
+pb <- predict(bestFit, 
+              newdata = data.frame(
+                      circumference = c))
+
+labeltxt <- paste(c, "mm\n", 
+                  format(round(p,0), nsmall = 0), "days")
+
+```
+
+The application allows the user to modify the trees they want to include in the
+prediction model.
+
+So for a tree of 120mm circumference using only trees 1 & 3
+we get a prediction of `r format(round(p,0), nsmall =0)` days as opposed
+to `r format(round(pb,0), nsmall =0)` days with the 5-Tree model.
+
+Producing a Prediction
+========================================================
+
+```{r predictivePlot, echo=FALSE, fig.width = 20, fig.height = 10, fig.align = "center"}
+# plot the graph based on the dynamic information
+plot(age ~ circumference, data = orig, 
+     col = ifelse(selected, selColor[ic], unColor[ic]),
+     pch = 18, cex = 2, ylim = c(0,2500), xlim = c(0,250),
+     xlab = "circumference in mm", ylab = "age in days",
+     axes = FALSE)
+axis(1, col = "gray", pos = 0)
+axis(2, col = "gray", pos = 0)
+abline(fit, col = selColor[ic])
+abline(bestFit, col = unColor[ic])
+points(x = c, y = pb, 
+       col = unColor[ic], cex = 1, pch = 16)
+points(x = c, y = p, 
+       col = selColor[ic], cex = 2, pch = 21, bg = "white",
+       lwd = 2)
+text(x = c, y = p, labels = labeltxt, pos = 4)
+legend(x = 200, y = 500, legend = c("selected", "unselected"),
+       col = c(selColor[ic], unColor[ic]), pch = 18, pt.cex = 2)
+```
+
+*The predicted age of the tree is* 
+**`r format(round(p/(7*52),1), nsmall = 1)`**
+*years.*
+
+Potential Improvements
+========================================================
+
+Although already a superb application there are ways in which the 
+*Orange Tree Prognosticator* could be improved:
+- Increase the size of the dataset.
+    - Use other species of trees.
+    - Collect data from more trees.
+    - Collect data from a more varied time period.
+    - Collect data from different areas.
+- Improve the prediction algorithm.
+    - It may be possible to incorporate geographic data to decide which trees
+    to include in the predictive model.
+
